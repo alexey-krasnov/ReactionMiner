@@ -1,1 +1,4 @@
 training/*
+/notebooks/
+/__pycache__/
+*.pyc
