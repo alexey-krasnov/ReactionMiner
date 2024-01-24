@@ -2,7 +2,7 @@ peft>=0.4.0
 protobuf
 sentence_transformers
 spacy
-torch<=2.0.1
+torch=>2.0.1
 # Transformers library (v4.34.0) still has a bug for left padding,
 # and significantly affect the inference and thus our evaluation performance
 # Follwing PR is a temporary fix for it but has not been merged yet.

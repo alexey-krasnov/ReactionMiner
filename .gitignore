@@ -1,7 +1,8 @@
 training/*
 /__pycache__/
 *.pyc
-*.ipynb
 /pdf2text/xmlFiles/
 /pdf2text/parsed_raw/
 /pdf2text/results/
+/extraction/results/
+*.ipynb
