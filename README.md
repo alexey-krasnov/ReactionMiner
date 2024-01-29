@@ -5,7 +5,7 @@
 ## 🛠️ Environment and Installation
 To get started, simply run
 ```
-pip install git+https://github.com/alexey-krasnov/ReactionMiner`
+pip install git+https://github.com/alexey-krasnov/ReactionMiner
 ```
 
 Or install the necessary packages step-by-step:
