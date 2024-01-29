@@ -6,3 +6,4 @@ training/*
 /pdf2text/results/
 /extraction/results/
 *.ipynb
+/pdf_files/

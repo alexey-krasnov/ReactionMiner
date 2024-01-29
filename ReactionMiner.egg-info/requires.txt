@@ -1,0 +1,5 @@
+peft>=0.4.0
+protobuf
+sentence_transformers
+spacy
+torch>=2.0.1
