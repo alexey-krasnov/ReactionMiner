@@ -5,8 +5,11 @@ import spacy
 from collections import Counter
 import numpy as np
 
+
+# Download the en_core_web_sm model if not already installed
+if not spacy.util.is_package("en_core_web_sm"):
+    spacy.cli.download("en_core_web_sm")
 # load core english library
-spacy.cli.download("en_core_web_sm")
 nlp = spacy.load("en_core_web_sm")
 
 

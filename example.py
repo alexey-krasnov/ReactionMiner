@@ -6,7 +6,7 @@ from pdf2text.generalParser import parseFile
 from segmentation.segmentor import TopicSegmentor
 from extraction.extractor import ReactionExtractor
 
-pdf_path = "pdf_files/Synthesis_of_Fluorinated_Amines.pdf"
+pdf_path = "copper_acetate.pdf"
 
 # Stage I: pdf to text
 # The results will be automatically saved to pdf2text/results
