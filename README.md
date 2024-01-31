@@ -12,9 +12,8 @@ Or install the necessary packages step-by-step:
 ```
 git clone https://github.com/alexey-krasnov/ReactionMiner
 cd ReactionMiner
-pip install -r requirements.txt
-python -m spacy download en_core_web_sm
 pip install -e . 
+python -m spacy download en_core_web_sm
 ```
 
 For using the PDF-to-Text module in Reaction Miner, ensure Maven and Java 1.8 are installed. Then, execute:

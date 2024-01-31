@@ -148,13 +148,8 @@ class ReactionExtractor:
         Returns:
             list: List of dictionaries containing input texts and corresponding extracted reactions.
         """
-        default_promt = ('For the given input text, extract chemical reactions containing chemical categories such as reactants, catalysts, '
-                       'products, solvents, yield, temperature, time, atmosphere for each reaction. '
-                       'Return each reaction in JSON format. '
-                       'Each reaction JSON should contain all above-listed chemical categories as fields for each category.'
-                       ' If a category is not found in a reaction, provide an empty array for the corresponding field. '
-                       'If multiple reactions are found, provide a list of JSON objects with the key words as Reaction 1, Reaction 2. Reaction 3 etc.. ')
-
+        # default_promt = """For the given input text, extract chemical reactions containing chemical categories such as reactants, catalysts,  products, solvents, yield, temperature, time, atmosphere for each reaction. Return each reaction in JSON format. Each reaction JSON should contain all above-listed chemical categories as fields for each category. If a category is not found in a reaction, provide an empty array for the corresponding field. If multiple reactions are found, provide a list of JSON objects with the key words as Reaction 1, Reaction 2. Reaction 3 etc.. """
+        default_promt = ''
         # default_promt = 'You are a helpful assistant in extracting all the chemical reactions from the text provided by the user.'
 
         system_prompt = f"<|system|>\n{default_promt}\n\n"
