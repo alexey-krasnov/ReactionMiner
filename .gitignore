@@ -1,9 +1,9 @@
 training/*
-/__pycache__/
+*/__pycache__/*
 *.pyc
-/pdf2text/xmlFiles/
-/pdf2text/parsed_raw/
-/pdf2text/results/
-/extraction/results/
+/ReactionMiner/pdf2text/xmlFiles/
+/ReactionMiner/pdf2text/parsed_raw/
+/ReactionMiner/pdf2text/results/
+/ReactionMiner/extraction/results/
 *.ipynb
 /pdf_files/
