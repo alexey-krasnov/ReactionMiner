@@ -52,7 +52,7 @@ Given a PDF file, please refer to [example.py](./example.py) to run our entire s
 This step transforms a PDF file into text, saving a json file:
 
 ```python
-from ReactionMiner.pdf2text import parseFile
+from ReactionMiner.pdf2text.generalParser import parseFile
 
 pdf_path = "copper_acetate.pdf"  # PDF file given by the user
 result = parseFile(pdf_path)
@@ -76,7 +76,7 @@ seg_texts = segmentor.segment(paragraphs)
 Extracts structured chemical reactions from each segment:
 
 ```python
-from ReactionMiner.extraction import ReactionExtractor
+from ReactionMiner.extraction.extractor import ReactionExtractor
 
 extractor = ReactionExtractor('7b')
 reactions = extractor.extract(seg_texts)

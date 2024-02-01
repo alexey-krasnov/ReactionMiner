@@ -77,15 +77,18 @@ class ReactionExtractor:
             )
         else:
             self.model = LlamaForCausalLM.from_pretrained(
-                base_model, device_map={"": self.device}, low_cpu_mem_usage=True
+                base_model,
+                device_map={"": self.device},
+                low_cpu_mem_usage=True
             )
             self.model = PeftModel.from_pretrained(
                 self.model,
                 lora_path,
                 device_map={"": self.device},
             )
-        
+        # TODO this is important parameter - check how it influences on output
         if not load_8bit:
+            print('model half')  # By default use half
             self.model.half()
         
         self.model.eval()
@@ -93,6 +96,7 @@ class ReactionExtractor:
             self.model = torch.compile(self.model)
 
         self.excluded_phrases = ["not specified", "not mentioned", "not available", "none"]
+        print('Initialization of model completed.')
 
     def get_structured_reactions(self, reaction_string):
         """
@@ -118,6 +122,7 @@ class ReactionExtractor:
                     value = value.strip()
                     if not any(phrase in value.lower() for phrase in self.excluded_phrases):
                         reaction_dict[key] = value
+            # Condition to add recognized data as reaction, might be adjustable
             if len(reaction_dict) > 1 and 'Product' in reaction_dict:
                 reactions_dicts.append(reaction_dict)
         return reactions_dicts

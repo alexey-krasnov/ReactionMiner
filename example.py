@@ -1,9 +1,8 @@
-import os
 import json
 from pathlib import Path
-from ReactionMiner.pdf2text import parseFile
+from ReactionMiner.pdf2text.generalParser import parseFile
 from ReactionMiner.segmentation.segmentor import TopicSegmentor
-from ReactionMiner.extraction import ReactionExtractor
+from ReactionMiner.extraction.extractor import ReactionExtractor
 
 pdf_path = "copper_acetate.pdf"
 
@@ -27,7 +26,7 @@ reactions = extractor.extract(seg_texts)
 
 # Save the extracted chemical reactions
 write_path = 'ReactionMiner/extraction/results'
-os.makedirs(write_path, exist_ok=True)
+Path(write_path).mkdir(exist_ok=True)
 
 pdf_stem = Path(pdf_path).stem
 full_path = f'{write_path}/{pdf_stem}.json'
