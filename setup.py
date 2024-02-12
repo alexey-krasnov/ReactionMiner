@@ -3,28 +3,31 @@ from setuptools.command.install import install
 import subprocess
 import os
 
-def run_custom_install():
-    """Installation SymbolScraper library"""
-    # Change directory to SymbolScraper
-    symbol_scraper_dir = os.path.join(os.path.dirname(__file__), 'ReactionMiner', 'pdf2text', 'SymbolScraper')
-    print(f"SymbolScraper directory: {symbol_scraper_dir}")
-    os.chdir(symbol_scraper_dir)
-    # Initialize Git submodules
-    print("Initializing Git submodules...")
-    subprocess.run(['git', 'submodule', 'update', '--init'], check=True)
-    # Run make
-    print("Running make...")
-    subprocess.run(['make'], check=True)
+with open("README.md", "r", encoding="utf-8") as fh:
+    long_description = fh.read()
+
 
 class CustomInstallCommand(install):
     def run(self):
         # Run the default install command
         install.run(self)
-        # Run custom installation steps
-        run_custom_install()
+        # Custom installation steps
+        self.run_custom_install()
 
-with open("README.md", "r", encoding="utf-8") as fh:
-    long_description = fh.read()
+    def run_custom_install(self):
+        """Installation SymbolScraper library"""
+        try:
+            # Initialize Git submodules
+            print("Initializing Git submodules...")
+            subprocess.run(['git', 'submodule', 'update', '--init'], check=True, cwd='ReactionMiner/pdf2text/SymbolScraper')
+            # Run make
+            print("Running make...")
+            subprocess.run(['make'], check=True, cwd='ReactionMiner/pdf2text/SymbolScraper')
+            print("Make command executed successfully.")
+        except subprocess.CalledProcessError as e:
+            print(f"Error executing command: {e}")
+
+
 
 setuptools.setup(
     name="ReactionMiner",
@@ -57,4 +60,5 @@ setuptools.setup(
     ],
     python_requires=">=3.10",
     cmdclass={'install': CustomInstallCommand},
+    editable=True,
 )

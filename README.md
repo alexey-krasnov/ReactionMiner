@@ -14,7 +14,7 @@ Or install the necessary packages step-by-step:
 ```
 git clone https://github.com/alexey-krasnov/ReactionMiner
 cd ReactionMiner
-pip install -e . 
+pip install . 
 python -m spacy download en_core_web_sm
 ```
 
