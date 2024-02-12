@@ -1,4 +1,27 @@
 import setuptools
+from setuptools.command.install import install
+import subprocess
+import os
+
+def run_custom_install():
+    """Installation SymbolScraper library"""
+    # Change directory to SymbolScraper
+    symbol_scraper_dir = os.path.join(os.path.dirname(__file__), 'ReactionMiner', 'pdf2text', 'SymbolScraper')
+    print(f"SymbolScraper directory: {symbol_scraper_dir}")
+    os.chdir(symbol_scraper_dir)
+    # Initialize Git submodules
+    print("Initializing Git submodules...")
+    subprocess.run(['git', 'submodule', 'update', '--init'], check=True)
+    # Run make
+    print("Running make...")
+    subprocess.run(['make'], check=True)
+
+class CustomInstallCommand(install):
+    def run(self):
+        # Run the default install command
+        install.run(self)
+        # Run custom installation steps
+        run_custom_install()
 
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
@@ -33,4 +56,5 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     python_requires=">=3.10",
+    cmdclass={'install': CustomInstallCommand},
 )

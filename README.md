@@ -3,6 +3,8 @@
 [Reaction Miner: An Integrated System for Chemical Reaction Extraction from Textual Data](https://aclanthology.org/2023.emnlp-demo.36/)
 
 ## 🛠️ Environment and Installation
+For using the PDF-to-Text module in Reaction Miner, ensure Maven and Java 1.8 are installed.
+
 To get started, simply run
 ```
 pip install git+https://github.com/alexey-krasnov/ReactionMiner
@@ -14,13 +16,6 @@ git clone https://github.com/alexey-krasnov/ReactionMiner
 cd ReactionMiner
 pip install -e . 
 python -m spacy download en_core_web_sm
-```
-
-For using the PDF-to-Text module in Reaction Miner, ensure Maven and Java 1.8 are installed. Then, execute:
-```
-cd ReactionMiner/pdf2text/SymbolScraper
-git submodule update --init
-make
 ```
 
 ## 📖 How to Use Reaction Miner
