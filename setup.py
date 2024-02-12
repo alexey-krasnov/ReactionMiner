@@ -6,7 +6,7 @@ import os
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
-
+# FIXME: fixe installation of SymbolScraper library in editable mode.
 class CustomInstallCommand(install):
     def run(self):
         # Run the default install command
