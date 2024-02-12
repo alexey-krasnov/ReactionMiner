@@ -7,3 +7,7 @@ training/*
 /ReactionMiner/extraction/results/
 *.ipynb
 /pdf_files/
+*.bin
+*.pt
+*.ckpt
+*.pth
