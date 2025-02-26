@@ -1,4 +1,4 @@
-Metadata-Version: 2.1
+Metadata-Version: 2.2
 Name: ReactionMiner
 Version: 1.1
 Summary: An integrated system for chemical reaction extraction from textual data
@@ -10,15 +10,30 @@ Maintainer-email: mingz5@illinois.edu, a.krasnov@digital-science.com
 Classifier: Programming Language :: Python :: 3
 Classifier: Programming Language :: Python :: 3.10
 Classifier: Programming Language :: Python :: 3.11
+Classifier: Programming Language :: Python :: 3.12
 Classifier: Programming Language :: Python :: 3 :: Only
 Classifier: Operating System :: OS Independent
 Requires-Python: >=3.10
 Description-Content-Type: text/markdown
 Requires-Dist: peft>=0.4.0
+Requires-Dist: pyproject.toml
 Requires-Dist: protobuf
 Requires-Dist: sentence_transformers
+Requires-Dist: sentencepiece>=0.2.0
 Requires-Dist: spacy
 Requires-Dist: torch>=2.0.1
+Requires-Dist: transformers
+Dynamic: author
+Dynamic: author-email
+Dynamic: classifier
+Dynamic: description
+Dynamic: description-content-type
+Dynamic: home-page
+Dynamic: maintainer
+Dynamic: maintainer-email
+Dynamic: requires-dist
+Dynamic: requires-python
+Dynamic: summary
 
 # 🧪 ReactionMiner
 **Official Repository for the EMNLP 2023 Demo Paper**  

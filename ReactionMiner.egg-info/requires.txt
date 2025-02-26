@@ -1,5 +1,8 @@
 peft>=0.4.0
+pyproject.toml
 protobuf
 sentence_transformers
+sentencepiece>=0.2.0
 spacy
 torch>=2.0.1
+transformers
