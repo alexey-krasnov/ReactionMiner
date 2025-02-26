@@ -2,7 +2,7 @@ import sys
 import torch
 from tqdm import tqdm
 from peft import PeftModel
-from transformers import GenerationConfig, LlamaForCausalLM, LlamaTokenizer
+from transformers import GenerationConfig, LlamaForCausalLM, LlamaTokenizer, AutoTokenizer
 
 class ReactionExtractor:
     """
@@ -32,7 +32,8 @@ class ReactionExtractor:
     def __init__(
         self,
         model_size,
-        base_model="meta-llama/Llama-2-7b-hf",
+        # base_model="meta-llama/Llama-2-7b-hf",
+        base_model="meta-llama/Meta-Llama-3.1-8B",
         load_8bit=False,
         cache_dir=None
     ):
@@ -40,42 +41,56 @@ class ReactionExtractor:
         Set up model
         """
         if torch.cuda.is_available():
+            print('GPU detected, using GPU')
             self.device = "cuda"
         elif torch.backends.mps.is_available():
+            print('MPS is available, it has been enabled')
             self.device = "mps"
         else:
             self.device = "cpu"
 
-        # Currently only 7b model size is supported
-        assert model_size in ['7b']
-        lora_path = f"MingZhong/reaction-miner-{model_size}-lora"
+        # Currently only 8b model size is supported
+        assert model_size in ['8b']
+        # lora_path = f"MingZhong/reaction-miner-{model_size}-lora"
+        lora_path = f'TingfengLuo/reaction-miner-8b-lora'
 
-        self.tokenizer = LlamaTokenizer.from_pretrained(base_model)
+        # self.tokenizer = LlamaTokenizer.from_pretrained(base_model)
+        print('Running TingfengLuo/reaction-miner-8b-lora...')
+
+        # self.tokenizer = LlamaTokenizer.from_pretrained(base_model)
+        self.tokenizer = AutoTokenizer.from_pretrained(base_model, token=True)
         if self.device == "cuda":
+            print('Executing on GPU...')
             self.model = LlamaForCausalLM.from_pretrained(
                 base_model,
                 load_in_8bit=load_8bit,
                 torch_dtype=torch.float16,
                 device_map="auto",
+                low_cpu_mem_usage=True,
             )
             self.model = PeftModel.from_pretrained(
                 self.model,
                 lora_path,
                 torch_dtype=torch.float16,
+                low_cpu_mem_usage=True,
             )
         elif self.device == "mps":
+            print('Executing on MPS...')
             self.model = LlamaForCausalLM.from_pretrained(
                 base_model,
                 device_map={"": self.device},
+                low_cpu_mem_usage=True,
                 torch_dtype=torch.float16,
             )
             self.model = PeftModel.from_pretrained(
                 self.model,
                 lora_path,
                 device_map={"": self.device},
+                low_cpu_mem_usage=True,
                 torch_dtype=torch.float16,
             )
         else:
+            print('Executing on CPU...')
             self.model = LlamaForCausalLM.from_pretrained(
                 base_model,
                 device_map={"": self.device},
@@ -85,6 +100,7 @@ class ReactionExtractor:
                 self.model,
                 lora_path,
                 device_map={"": self.device},
+                low_cpu_mem_usage=True,
             )
         # TODO this is important parameter - check how it influences on output
         if not load_8bit:
@@ -93,6 +109,7 @@ class ReactionExtractor:
         
         self.model.eval()
         if torch.__version__ >= "2" and sys.platform != "win32":
+            print('Compiling...')
             self.model = torch.compile(self.model)
 
         self.excluded_phrases = ["not specified", "not mentioned", "not available", "none"]

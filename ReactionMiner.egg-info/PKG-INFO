@@ -1,8 +1,8 @@
 Metadata-Version: 2.2
 Name: ReactionMiner
-Version: 1.1
+Version: 1.2
 Summary: An integrated system for chemical reaction extraction from textual data
-Home-page: https://github.com/alexey-krasnov/ReactionMiner
+Home-page: https://github.com/maszhongming/ReactionMiner
 Author: Ming Zhong, Siru Ouyang, Yizhu Jiao, Priyanka Kargupta, Leo Luo, Yanzhen Shen, Bobby Zhou, Xianrui Zhong, Xuan Liu, Hongxiang Li, Jinfeng Xiao, Minhao Jiang, Vivian Hu, Xuan Wang, Heng Ji, Martin Burke, Huimin Zhao, Jiawei Han
 Author-email: mingz5@illinois.edu
 Maintainer: Dr. Aleksei Krasnov
@@ -15,14 +15,15 @@ Classifier: Programming Language :: Python :: 3 :: Only
 Classifier: Operating System :: OS Independent
 Requires-Python: >=3.10
 Description-Content-Type: text/markdown
+Requires-Dist: datasets>=3.3.2
 Requires-Dist: peft>=0.4.0
-Requires-Dist: pyproject.toml
-Requires-Dist: protobuf
-Requires-Dist: sentence_transformers
+Requires-Dist: protobuf>=5.29.3
+Requires-Dist: pyproject.toml>=0.1.0
+Requires-Dist: sentence_transformers>=3.0.1
 Requires-Dist: sentencepiece>=0.2.0
-Requires-Dist: spacy
+Requires-Dist: spacy>=3.8.4
 Requires-Dist: torch>=2.0.1
-Requires-Dist: transformers
+Requires-Dist: transformers>=4.49.0
 Dynamic: author
 Dynamic: author-email
 Dynamic: classifier
@@ -44,12 +45,12 @@ For using the PDF-to-Text module in Reaction Miner, ensure Maven and Java 1.8 ar
 
 To get started, simply run
 ```
-pip install git+https://github.com/alexey-krasnov/ReactionMiner
+pip install git+https://github.com/maszhongming/ReactionMiner
 ```
 
 Or install the necessary packages step-by-step:
 ```
-git clone https://github.com/alexey-krasnov/ReactionMiner
+git clone https://github.com/maszhongming/ReactionMiner
 cd ReactionMiner
 pip install . 
 python -m spacy download en_core_web_sm

@@ -2,15 +2,15 @@ import sys
 import torch
 from tqdm import tqdm
 from peft import PeftModel
-from transformers import GenerationConfig, LlamaForCausalLM, LlamaTokenizer
+from transformers import GenerationConfig, LlamaForCausalLM, LlamaTokenizer, AutoTokenizer
 
 class ReactionExtractor:
     """
     A class for extracting chemical reactions from text using a pre-trained language model.
 
     Args:
-        model_size (str): The size of the language model (e.g., '7b').
-        base_model (str, optional): The base model to use. Defaults to "meta-llama/Llama-2-7b-hf".
+        model_size (str): The size of the language model (e.g., '8b').
+        base_model (str, optional): The base model to use. Defaults to "meta-llama/Meta-Llama-3.1-8B".
         load_8bit (bool, optional): Whether to load the model in 8-bit mode. Defaults to False.
         cache_dir (str, optional): Directory for caching model files. Defaults to None.
 
@@ -32,7 +32,7 @@ class ReactionExtractor:
     def __init__(
         self,
         model_size,
-        base_model="meta-llama/Llama-2-7b-hf",
+        base_model="meta-llama/Meta-Llama-3.1-8B",
         load_8bit=False,
         cache_dir=None
     ):
@@ -40,42 +40,56 @@ class ReactionExtractor:
         Set up model
         """
         if torch.cuda.is_available():
-            self.device = "cuda"
+            print('GPU detected, using GPU')
+            self.device = "cuda:0"
         elif torch.backends.mps.is_available():
+            print('MPS is available, it has been enabled')
             self.device = "mps"
         else:
+            print('No GPU detected, falling back to CPU-only')
             self.device = "cpu"
 
-        # Currently only 7b model size is supported
-        assert model_size in ['7b']
-        lora_path = f"MingZhong/reaction-miner-{model_size}-lora"
+        # Currently only 8b model size is supported
+        assert model_size in ['8b']
+        lora_path = f'TingfengLuo/reaction-miner-8b-lora'
 
-        self.tokenizer = LlamaTokenizer.from_pretrained(base_model)
+        # self.tokenizer = LlamaTokenizer.from_pretrained(base_model)
+        print('Running TingfengLuo/reaction-miner-8b-lora...')
+        self.tokenizer = AutoTokenizer.from_pretrained(base_model, token=True)
+
         if self.device == "cuda":
+            print('Executing on GPU...')
             self.model = LlamaForCausalLM.from_pretrained(
                 base_model,
                 load_in_8bit=load_8bit,
                 torch_dtype=torch.float16,
-                device_map="auto",
+                # device_map="auto",
+                low_cpu_mem_usage=True,
+                device_map={"": self.device},
             )
             self.model = PeftModel.from_pretrained(
                 self.model,
                 lora_path,
                 torch_dtype=torch.float16,
+                low_cpu_mem_usage=True,
             )
         elif self.device == "mps":
+            print('Executing on MPS...')
             self.model = LlamaForCausalLM.from_pretrained(
                 base_model,
                 device_map={"": self.device},
+                low_cpu_mem_usage=True,
                 torch_dtype=torch.float16,
             )
             self.model = PeftModel.from_pretrained(
                 self.model,
                 lora_path,
                 device_map={"": self.device},
+                low_cpu_mem_usage=True,
                 torch_dtype=torch.float16,
             )
         else:
+            print('Executing on CPU...')
             self.model = LlamaForCausalLM.from_pretrained(
                 base_model,
                 device_map={"": self.device},
@@ -85,6 +99,7 @@ class ReactionExtractor:
                 self.model,
                 lora_path,
                 device_map={"": self.device},
+                low_cpu_mem_usage=True,
             )
         # TODO this is important parameter - check how it influences on output
         if not load_8bit:
@@ -93,6 +108,7 @@ class ReactionExtractor:
         
         self.model.eval()
         if torch.__version__ >= "2" and sys.platform != "win32":
+            print('Compiling...')
             self.model = torch.compile(self.model)
 
         self.excluded_phrases = ["not specified", "not mentioned", "not available", "none"]
@@ -155,10 +171,6 @@ class ReactionExtractor:
         Returns:
             list: List of dictionaries containing input texts and corresponding extracted reactions.
         """
-        # default_prompt  = """For the given input text, extract chemical reactions containing chemical categories such as reactants, catalysts,  products, solvents, yield, temperature, time, atmosphere for each reaction. Return each reaction in JSON format. Each reaction JSON should contain all above-listed chemical categories as fields for each category. If a category is not found in a reaction, provide an empty array for the corresponding field. If multiple reactions are found, provide a list of JSON objects with the key words as Reaction 1, Reaction 2. Reaction 3 etc.. """
-        # default_prompt  = ''
-        # default_prompt  = 'You are a helpful assistant in extracting all the chemical reactions from the text provided by the user.'
-
         system_prompt = f"<|system|>\n{default_prompt}\n\n"
         
         generation_config = GenerationConfig(
