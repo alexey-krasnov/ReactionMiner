@@ -1,3 +1,25 @@
+Metadata-Version: 2.1
+Name: ReactionMiner
+Version: 1.1
+Summary: An integrated system for chemical reaction extraction from textual data
+Home-page: https://github.com/alexey-krasnov/ReactionMiner
+Author: Ming Zhong, Siru Ouyang, Yizhu Jiao, Priyanka Kargupta, Leo Luo, Yanzhen Shen, Bobby Zhou, Xianrui Zhong, Xuan Liu, Hongxiang Li, Jinfeng Xiao, Minhao Jiang, Vivian Hu, Xuan Wang, Heng Ji, Martin Burke, Huimin Zhao, Jiawei Han
+Author-email: mingz5@illinois.edu
+Maintainer: Dr. Aleksei Krasnov
+Maintainer-email: mingz5@illinois.edu, a.krasnov@digital-science.com
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Programming Language :: Python :: 3 :: Only
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+Requires-Dist: peft>=0.4.0
+Requires-Dist: protobuf
+Requires-Dist: sentence_transformers
+Requires-Dist: spacy
+Requires-Dist: torch>=2.0.1
+
 # 🧪 ReactionMiner
 **Official Repository for the EMNLP 2023 Demo Paper**  
 [Reaction Miner: An Integrated System for Chemical Reaction Extraction from Textual Data](https://aclanthology.org/2023.emnlp-demo.36/)

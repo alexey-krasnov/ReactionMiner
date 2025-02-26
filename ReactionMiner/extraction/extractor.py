@@ -1,11 +1,34 @@
 import sys
 import torch
 from tqdm import tqdm
-import transformers
 from peft import PeftModel
 from transformers import GenerationConfig, LlamaForCausalLM, LlamaTokenizer
 
 class ReactionExtractor:
+    """
+    A class for extracting chemical reactions from text using a pre-trained language model.
+
+    Args:
+        model_size (str): The size of the language model (e.g., '7b').
+        base_model (str, optional): The base model to use. Defaults to "meta-llama/Llama-2-7b-hf".
+        load_8bit (bool, optional): Whether to load the model in 8-bit mode. Defaults to False.
+        cache_dir (str, optional): Directory for caching model files. Defaults to None.
+
+    Attributes:
+        device (str): The device to run the model on ('cuda', 'cpu', or 'mps').
+        tokenizer (LlamaTokenizer): Tokenizer for processing text.
+        model (PeftModel): Pre-trained language model for reaction extraction.
+        excluded_phrases (list): List of phrases to exclude when parsing reactions.
+
+    Methods:
+        get_structured_reactions(reaction_string): Parses reactions into structured dictionaries.
+        extract(texts, temperature, top_p, top_k, do_sample, max_new_tokens, **kwargs): 
+            Extracts reactions from a list of input texts.
+
+    Example:
+        extractor = ReactionExtractor(model_size='7b')
+        reactions = extractor.extract(['Sample text containing chemical reactions.'])
+    """
     def __init__(
         self,
         model_size,
@@ -13,17 +36,15 @@ class ReactionExtractor:
         load_8bit=False,
         cache_dir=None
     ):
-        """ Set up model """
+        """ 
+        Set up model
+        """
         if torch.cuda.is_available():
             self.device = "cuda"
+        elif torch.backends.mps.is_available():
+            self.device = "mps"
         else:
             self.device = "cpu"
-        
-        try:
-            if torch.backends.mps.is_available():
-                self.device = "mps"
-        except:
-            pass
 
         # Currently only 7b model size is supported
         assert model_size in ['7b']
@@ -56,15 +77,18 @@ class ReactionExtractor:
             )
         else:
             self.model = LlamaForCausalLM.from_pretrained(
-                base_model, device_map={"": self.device}, low_cpu_mem_usage=True
+                base_model,
+                device_map={"": self.device},
+                low_cpu_mem_usage=True
             )
             self.model = PeftModel.from_pretrained(
                 self.model,
                 lora_path,
                 device_map={"": self.device},
             )
-        
+        # TODO this is important parameter - check how it influences on output
         if not load_8bit:
+            print('model half')  # By default use half
             self.model.half()
         
         self.model.eval()
@@ -72,8 +96,18 @@ class ReactionExtractor:
             self.model = torch.compile(self.model)
 
         self.excluded_phrases = ["not specified", "not mentioned", "not available", "none"]
+        print('Initialization of model completed.')
 
     def get_structured_reactions(self, reaction_string):
+        """
+        Parses raw reaction strings into structured dictionaries.
+
+        Args:
+            reaction_string (str): Raw reaction input_string to be parsed.
+
+        Returns:
+            list: List of dictionaries representing structured reactions.
+        """
         # Parsing each output into a dictionary and filtering out excluded_phrases
         reactions_list = reaction_string.strip().split("\n\n")
 
@@ -88,6 +122,7 @@ class ReactionExtractor:
                     value = value.strip()
                     if not any(phrase in value.lower() for phrase in self.excluded_phrases):
                         reaction_dict[key] = value
+            # Condition to add recognized data as reaction, might be adjustable
             if len(reaction_dict) > 1 and 'Product' in reaction_dict:
                 reactions_dicts.append(reaction_dict)
         return reactions_dicts
@@ -95,6 +130,7 @@ class ReactionExtractor:
     def extract(
         self,
         texts,
+        default_prompt ='You are a helpful assistant in extracting all the chemical reactions from the text provided by the user.',
         temperature=0.1,
         top_p=0.75,
         top_k=40,
@@ -103,7 +139,27 @@ class ReactionExtractor:
         max_new_tokens=1024,
         **kwargs
     ):
-        system_prompt = "<|system|>\nYou are a helpful assistant in extracting all the chemical reactions from the text provided by the user.\n\n"
+        """
+        Extracts chemical reactions from a list of input texts.
+
+        Args:
+            texts (list or str): List of input texts or a single input text.
+            default_prompt (str): Prompt for model
+            temperature (float, optional): Sampling temperature for generation. Defaults to 0.1.
+            top_p (float, optional): Top-p nucleus sampling probability. Defaults to 0.75.
+            top_k (int, optional): Top-k sampling parameter. Defaults to 40.
+            do_sample (bool, optional): Whether to use sampling during generation. Defaults to True.
+            max_new_tokens (int, optional): Maximum number of new tokens to generate. Defaults to 1024.
+            **kwargs: Additional generation configuration options.
+
+        Returns:
+            list: List of dictionaries containing input texts and corresponding extracted reactions.
+        """
+        # default_prompt  = """For the given input text, extract chemical reactions containing chemical categories such as reactants, catalysts,  products, solvents, yield, temperature, time, atmosphere for each reaction. Return each reaction in JSON format. Each reaction JSON should contain all above-listed chemical categories as fields for each category. If a category is not found in a reaction, provide an empty array for the corresponding field. If multiple reactions are found, provide a list of JSON objects with the key words as Reaction 1, Reaction 2. Reaction 3 etc.. """
+        # default_prompt  = ''
+        # default_prompt  = 'You are a helpful assistant in extracting all the chemical reactions from the text provided by the user.'
+
+        system_prompt = f"<|system|>\n{default_prompt}\n\n"
         
         generation_config = GenerationConfig(
             temperature=temperature,
