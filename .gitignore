@@ -12,3 +12,4 @@ training/*
 *.ckpt
 *.pth
 *.egg-info
+/build/
