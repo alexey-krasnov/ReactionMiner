@@ -11,3 +11,4 @@ training/*
 *.pt
 *.ckpt
 *.pth
+*.egg-info

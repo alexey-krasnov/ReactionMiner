@@ -52,7 +52,7 @@ class C99:
         window: int, window size for local similarity ranking
         std_coeff: double, threshold to determine boundary, see paper for more details
         tokenizer: an object with tokenize() method,
-                   which takes a string as argument and return a sequence of tokens.
+                   which takes a input_string as argument and return a sequence of tokens.
         """
         self.window = window
         self.sim = None

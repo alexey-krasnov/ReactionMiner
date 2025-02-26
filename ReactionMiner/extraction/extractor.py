@@ -103,7 +103,7 @@ class ReactionExtractor:
         Parses raw reaction strings into structured dictionaries.
 
         Args:
-            reaction_string (str): Raw reaction string to be parsed.
+            reaction_string (str): Raw reaction input_string to be parsed.
 
         Returns:
             list: List of dictionaries representing structured reactions.
